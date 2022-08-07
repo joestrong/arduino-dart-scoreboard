@@ -29,8 +29,8 @@ char keys[ROWS][COLS] = {
   {'7', '8', '9'},
   {'*', '0', '#'}
 };
-byte rowPins[ROWS] = {12, 11, 10, 9}; // connect to the Rows pinouts of the keypad to NANO pins
-byte colPins[COLS] = {8, 7, 6}; // connect to the Columns pinouts of the keypad to NANO pins
+byte rowPins[ROWS] = {7, 12, 11, 9}; // connect to the Rows pinouts of the keypad to NANO pins
+byte colPins[COLS] = {8, 6, 10}; // connect to the Columns pinouts of the keypad to NANO pins
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS ); // Library init
 
 // Setup the I2C module connected to the LCD
@@ -74,7 +74,7 @@ TM1637Display P2Display(P2CLK, P2DIO); // Library init of Player 2 display
 
 // Define needed Variables
 volatile int GAMESTART = 1; // 1=Display start menu : 0=game started
-volatile int GAMESTARTVALUE = 101; // Score start value
+volatile int GAMESTARTVALUE = 501; // Score start value
 volatile int PLAYER1Score = 0; // Stores Player 1 current score
 volatile int PLAYER2Score = 0; // Stores Player 2 current score
 volatile int PLAYERTurn = 1; // Player 1 is first to start
@@ -133,8 +133,13 @@ void setup()
   //  lcd.setBacklight(HIGH);
 
   // 7 Segment LED displays brightness
-  P1Display.setBrightness(0x09);
-  P2Display.setBrightness(0x08);
+  P1Display.setBrightness(0x0f);
+  P2Display.setBrightness(0x0f);
+
+  // Display Starting score on both P1 and P2 7 segment Displays
+  P1Display.showNumberDec(8888, 4);
+  P2Display.showNumberDec(8888, 4);
+ 
 
   // Flash the Intro text on LCD at power up
   lcd.home (); // go home on LCD
@@ -225,9 +230,9 @@ void loop()
   }
 
   if (GAMESTART == 1) { // Set various stuff at startup
-    digitalWrite(Player1Led, HIGH); // Set Player 1 LED to ON
-    digitalWrite(Player2Led, HIGH); // Set Player 2 LED to ON
-
+    digitalWrite(Player1Led, LOW); // Set Player 1 LED to OFF
+    digitalWrite(Player2Led, LOW); // Set Player 2 LED to OFF
+  
     // Display on LCD starting text
     lcd.home();
     lcd.print("Starting Score >");
@@ -374,7 +379,7 @@ void subtractnumber() {
       PLAYERTurn = 1;
       P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
-    if (secondnumber != 99 && thirdnumber == 99) {
+     if (secondnumber != 99 && thirdnumber == 99) {
       keyfullnumber = (firstnumber * 10) + secondnumber;
       if (PLAYER2Score - keyfullnumber >= 0) {
         PLAYER2Score = PLAYER2Score - keyfullnumber;
@@ -382,8 +387,8 @@ void subtractnumber() {
       PLAYERTurn = 1;
       P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
-    if (thirdnumber = !99) {
-      keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
+   if (thirdnumber == !99) {
+      keyfullnumber = (firstnumber * 10) + (secondnumber * 10) + thirdnumber;
       if (PLAYER2Score - keyfullnumber >= 0) {
         PLAYER2Score = PLAYER2Score - keyfullnumber;
       }
