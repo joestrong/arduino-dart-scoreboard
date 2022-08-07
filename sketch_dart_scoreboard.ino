@@ -92,7 +92,7 @@ void rotarydetect ()  {
         QUITNO = 1;
         QUITYES = 0;
       }
-      if (digitalRead(RotaryDT)) {
+      if (!digitalRead(RotaryDT)) {
         QUITYES = 1;
         QUITNO = 0;
       }
