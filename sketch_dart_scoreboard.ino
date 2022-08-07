@@ -344,6 +344,15 @@ void deletenumber() {
   }
 }
 
+void clearNumberDisplay() {
+  lcd.setCursor(13, 1);
+  lcd.print(" ");
+  lcd.setCursor(14, 1);
+  lcd.print(" ");
+  lcd.setCursor(15, 1);
+  lcd.print(" ");
+}
+
 void subtractnumber() {
   if (PLAYERTurn == 1) {
     // P1 score is 1 digit
@@ -403,6 +412,7 @@ void subtractnumber() {
     }
   }
   resetnumbers();
+  clearNumberDisplay();
 }
 
 void resetnumbers() {
