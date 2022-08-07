@@ -346,6 +346,7 @@ void deletenumber() {
 
 void subtractnumber() {
   if (PLAYERTurn == 1) {
+    // P1 score is 1 digit
     if (thirdnumber == 99 && secondnumber == 99 && firstnumber != 99) {
       keyfullnumber = firstnumber;
       if (PLAYER1Score - keyfullnumber >= 0) {
@@ -354,6 +355,7 @@ void subtractnumber() {
       PLAYERTurn = 2;
       P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
     }
+    // P2 score is 2 digits
     if (secondnumber != 99 && thirdnumber == 99) {
       keyfullnumber = (firstnumber * 10) + secondnumber;
       if (PLAYER1Score - keyfullnumber >= 0) {
@@ -362,8 +364,9 @@ void subtractnumber() {
       PLAYERTurn = 2;
       P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
     }
+    // P2 score is 3 digits
     if (thirdnumber == !99) {
-      keyfullnumber = (firstnumber * 10) + (secondnumber * 10) + thirdnumber;
+      keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
       if (PLAYER1Score - keyfullnumber >= 0) {
         PLAYER1Score = PLAYER1Score - keyfullnumber;
       }
@@ -371,6 +374,7 @@ void subtractnumber() {
       P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
     }
   } else {
+    // P2 score is 1 digit
     if (thirdnumber = 99 && secondnumber == 99 && firstnumber != 99) {
       keyfullnumber = firstnumber;
       if (PLAYER2Score - keyfullnumber >= 0) {
@@ -379,6 +383,7 @@ void subtractnumber() {
       PLAYERTurn = 1;
       P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
+    // P2 score is 2 digits
      if (secondnumber != 99 && thirdnumber == 99) {
       keyfullnumber = (firstnumber * 10) + secondnumber;
       if (PLAYER2Score - keyfullnumber >= 0) {
@@ -387,8 +392,9 @@ void subtractnumber() {
       PLAYERTurn = 1;
       P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
+    // P2 score is 3 digits
    if (thirdnumber == !99) {
-      keyfullnumber = (firstnumber * 10) + (secondnumber * 10) + thirdnumber;
+      keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
       if (PLAYER2Score - keyfullnumber >= 0) {
         PLAYER2Score = PLAYER2Score - keyfullnumber;
       }
