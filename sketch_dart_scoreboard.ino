@@ -14,9 +14,7 @@
 #include "Keypad.h" // For 12 buttons keypad
 
 //Define the keypad
-int firstnumber = 99; // used to tell how many numbers were entered on keypad
-int secondnumber = 99;
-int thirdnumber = 99;
+int enteredNumber = 0;
 const byte ROWS = 4; // Keypad has four rows
 const byte COLS = 3; // Keypad has three columns
 
@@ -218,13 +216,17 @@ void loop()
         GAMERESET = 0; // Reset GameReset to 0
         QUITNO = 2; // Reset NO
         QUITYES = 2; // Reset YES
+        // Draw game screen
+        drawEnteredNumber();
       }
       if (GAMERESET == 1 && QUITYES == 1) { // Game is in reset screen and YES is selected
         softReset(); // Reset Game
       }
     }
     if (GAMESTART == 1) { // Game is at select score screen
-      GAMESTART = 0; // Start Game
+      // Start Game
+      GAMESTART = 0; 
+      drawEnteredNumber();
     }
   }
 
@@ -303,89 +305,43 @@ void softReset() {
 }                       // *note : Does not reset external hardware connected to the Arduino.
 
 void checknumber(int x) {
-  if (firstnumber == 99) {
-    firstnumber = x;
-    lcd.setCursor(13, 1);
-    lcd.print(x);
-  } else {
-    if (secondnumber == 99) {
-      secondnumber = x;
-      lcd.setCursor(14, 1);
-      lcd.print(x);
-    } else {
-      thirdnumber = x;
-      lcd.setCursor(15, 1);
-      lcd.print(x);
-    }
+  if (enteredNumber >= 100) {
+    return; // Don't allow past 3 digits
   }
-}
+  enteredNumber = (enteredNumber * 10) + x;
 
+  drawEnteredNumber();
+}
 
 void deletenumber() {
-  if (thirdnumber != 99) {
-    lcd.setCursor(15, 1);
-    lcd.print(" ");
-    thirdnumber = 99;
-  } else {
-
-    if (secondnumber != 99) {
-      lcd.setCursor(14, 1);
-      lcd.print(" ");
-      secondnumber = 99;
-    } else {
-
-      if (firstnumber != 99) {
-        lcd.setCursor(13, 1);
-        lcd.print(" ");
-        firstnumber = 99;
-      }
-    }
-  }
+  enteredNumber = enteredNumber / 10;
+  drawEnteredNumber();
 }
 
-void clearNumberDisplay() {
+void drawEnteredNumber() {
   lcd.setCursor(13, 1);
-  lcd.print(" ");
-  lcd.setCursor(14, 1);
-  lcd.print(" ");
-  lcd.setCursor(15, 1);
-  lcd.print(" ");
+  lcd.print(enteredNumber);
+  lcd.print("  ");
 }
 
 void subtractnumber() {
-  int keyfullnumber = 0;
-
-  // Score is 1 digit
-  if (thirdnumber == 99 && secondnumber == 99 && firstnumber != 99) {
-    keyfullnumber = firstnumber;
-  }
-  // Score is 2 digits
-  if (secondnumber != 99 && thirdnumber == 99) {
-    keyfullnumber = (firstnumber * 10) + secondnumber;
-  }
-  // Score is 3 digits
-  if (thirdnumber != 99) {
-    keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
-  }
-  
   if (PLAYERTurn == 1) {
-    if (PLAYER1Score - keyfullnumber >= 0) {
+    if (PLAYER1Score - enteredNumber >= 0) {
       int oldscore = PLAYER1Score;
-      PLAYER1Score = PLAYER1Score - keyfullnumber;
+      PLAYER1Score = PLAYER1Score - enteredNumber;
       subtractScoreAnimation(1, oldscore, PLAYER1Score);
     }
     PLAYERTurn = 2;
   } else {
-    if (PLAYER2Score - keyfullnumber >= 0) {
+    if (PLAYER2Score - enteredNumber >= 0) {
       int oldscore = PLAYER2Score;
-      PLAYER2Score = PLAYER2Score - keyfullnumber;
+      PLAYER2Score = PLAYER2Score - enteredNumber;
       subtractScoreAnimation(2, oldscore, PLAYER2Score);
     }
     PLAYERTurn = 1;
   }
   
   resetnumbers();
-  clearNumberDisplay();
 }
 
 void subtractScoreAnimation(int player, int oldscore, int newscore) {
@@ -400,7 +356,7 @@ void subtractScoreAnimation(int player, int oldscore, int newscore) {
 }
 
 void resetnumbers() {
-  firstnumber = 99;
-  secondnumber = 99;
-  thirdnumber = 99;
+  enteredNumber = 0;
+
+  drawEnteredNumber();
 }
