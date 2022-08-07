@@ -17,7 +17,6 @@
 int firstnumber = 99; // used to tell how many numbers were entered on keypad
 int secondnumber = 99;
 int thirdnumber = 99;
-int keyfullnumber = 0; // used to store the final calculated score value
 const byte ROWS = 4; // Keypad has four rows
 const byte COLS = 3; // Keypad has three columns
 
@@ -354,6 +353,8 @@ void clearNumberDisplay() {
 }
 
 void subtractnumber() {
+  int keyfullnumber = 0;
+  
   if (PLAYERTurn == 1) {
     // P1 score is 1 digit
     if (thirdnumber == 99 && secondnumber == 99 && firstnumber != 99) {
@@ -364,7 +365,7 @@ void subtractnumber() {
       keyfullnumber = (firstnumber * 10) + secondnumber;
     }
     // P2 score is 3 digits
-    if (thirdnumber == !99) {
+    if (thirdnumber != 99) {
       keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
     }
     if (PLAYER1Score - keyfullnumber >= 0) {
@@ -379,11 +380,11 @@ void subtractnumber() {
       keyfullnumber = firstnumber;
     }
     // P2 score is 2 digits
-     if (secondnumber != 99 && thirdnumber == 99) {
+    if (secondnumber != 99 && thirdnumber == 99) {
       keyfullnumber = (firstnumber * 10) + secondnumber;
     }
     // P2 score is 3 digits
-    if (thirdnumber == !99) {
+    if (thirdnumber != 99) {
       keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
     }
     if (PLAYER2Score - keyfullnumber >= 0) {
