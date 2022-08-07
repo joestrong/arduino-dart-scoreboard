@@ -398,10 +398,13 @@ void subtractnumber() {
 }
 
 void subtractScoreAnimation(int player, int oldscore, int newscore) {
-  if (player == 1) {
-    P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
-  } else {
-    P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
+  while(oldscore > newscore) {
+    if (player == 1) {
+      P1Display.showNumberDec(oldscore, false, 4, 0);
+    } else {
+      P2Display.showNumberDec(oldscore, false, 4, 0);
+    }
+    oldscore--;
   }
 }
 
