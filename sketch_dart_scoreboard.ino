@@ -358,61 +358,51 @@ void subtractnumber() {
     // P1 score is 1 digit
     if (thirdnumber == 99 && secondnumber == 99 && firstnumber != 99) {
       keyfullnumber = firstnumber;
-      if (PLAYER1Score - keyfullnumber >= 0) {
-        PLAYER1Score = PLAYER1Score - keyfullnumber;
-      }
-      PLAYERTurn = 2;
-      P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
     }
     // P2 score is 2 digits
     if (secondnumber != 99 && thirdnumber == 99) {
       keyfullnumber = (firstnumber * 10) + secondnumber;
-      if (PLAYER1Score - keyfullnumber >= 0) {
-        PLAYER1Score = PLAYER1Score - keyfullnumber;
-      }
-      PLAYERTurn = 2;
-      P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
     }
     // P2 score is 3 digits
     if (thirdnumber == !99) {
       keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
-      if (PLAYER1Score - keyfullnumber >= 0) {
-        PLAYER1Score = PLAYER1Score - keyfullnumber;
-      }
-      PLAYERTurn = 2;
-      P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
     }
+    if (PLAYER1Score - keyfullnumber >= 0) {
+      int oldscore = PLAYER1Score;
+      PLAYER1Score = PLAYER1Score - keyfullnumber;
+      subtractScoreAnimation(1, oldscore, PLAYER1Score);
+    }
+    PLAYERTurn = 2;
   } else {
     // P2 score is 1 digit
     if (thirdnumber = 99 && secondnumber == 99 && firstnumber != 99) {
       keyfullnumber = firstnumber;
-      if (PLAYER2Score - keyfullnumber >= 0) {
-        PLAYER2Score = PLAYER2Score - keyfullnumber;
-      }
-      PLAYERTurn = 1;
-      P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
     // P2 score is 2 digits
      if (secondnumber != 99 && thirdnumber == 99) {
       keyfullnumber = (firstnumber * 10) + secondnumber;
-      if (PLAYER2Score - keyfullnumber >= 0) {
-        PLAYER2Score = PLAYER2Score - keyfullnumber;
-      }
-      PLAYERTurn = 1;
-      P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
     // P2 score is 3 digits
-   if (thirdnumber == !99) {
+    if (thirdnumber == !99) {
       keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
-      if (PLAYER2Score - keyfullnumber >= 0) {
-        PLAYER2Score = PLAYER2Score - keyfullnumber;
-      }
-      PLAYERTurn = 1;
-      P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
     }
+    if (PLAYER2Score - keyfullnumber >= 0) {
+      int oldscore = PLAYER2Score;
+      PLAYER2Score = PLAYER2Score - keyfullnumber;
+      subtractScoreAnimation(2, oldscore, PLAYER2Score);
+    }
+    PLAYERTurn = 1;
   }
   resetnumbers();
   clearNumberDisplay();
+}
+
+void subtractScoreAnimation(int player, int oldscore, int newscore) {
+  if (player == 1) {
+    P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
+  } else {
+    P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
+  }
 }
 
 void resetnumbers() {
