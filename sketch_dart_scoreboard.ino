@@ -354,20 +354,21 @@ void clearNumberDisplay() {
 
 void subtractnumber() {
   int keyfullnumber = 0;
+
+  // Score is 1 digit
+  if (thirdnumber == 99 && secondnumber == 99 && firstnumber != 99) {
+    keyfullnumber = firstnumber;
+  }
+  // Score is 2 digits
+  if (secondnumber != 99 && thirdnumber == 99) {
+    keyfullnumber = (firstnumber * 10) + secondnumber;
+  }
+  // Score is 3 digits
+  if (thirdnumber != 99) {
+    keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
+  }
   
   if (PLAYERTurn == 1) {
-    // P1 score is 1 digit
-    if (thirdnumber == 99 && secondnumber == 99 && firstnumber != 99) {
-      keyfullnumber = firstnumber;
-    }
-    // P2 score is 2 digits
-    if (secondnumber != 99 && thirdnumber == 99) {
-      keyfullnumber = (firstnumber * 10) + secondnumber;
-    }
-    // P2 score is 3 digits
-    if (thirdnumber != 99) {
-      keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
-    }
     if (PLAYER1Score - keyfullnumber >= 0) {
       int oldscore = PLAYER1Score;
       PLAYER1Score = PLAYER1Score - keyfullnumber;
@@ -375,18 +376,6 @@ void subtractnumber() {
     }
     PLAYERTurn = 2;
   } else {
-    // P2 score is 1 digit
-    if (thirdnumber = 99 && secondnumber == 99 && firstnumber != 99) {
-      keyfullnumber = firstnumber;
-    }
-    // P2 score is 2 digits
-    if (secondnumber != 99 && thirdnumber == 99) {
-      keyfullnumber = (firstnumber * 10) + secondnumber;
-    }
-    // P2 score is 3 digits
-    if (thirdnumber != 99) {
-      keyfullnumber = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
-    }
     if (PLAYER2Score - keyfullnumber >= 0) {
       int oldscore = PLAYER2Score;
       PLAYER2Score = PLAYER2Score - keyfullnumber;
@@ -394,6 +383,7 @@ void subtractnumber() {
     }
     PLAYERTurn = 1;
   }
+  
   resetnumbers();
   clearNumberDisplay();
 }
