@@ -400,12 +400,12 @@ void subtractnumber() {
 
 void subtractScoreAnimation(int player, int oldscore, int newscore) {
   while(oldscore > newscore) {
+    oldscore--;
     if (player == 1) {
       P1Display.showNumberDec(oldscore, false, 4, 0);
     } else {
-      P2Display.showNumberDec(oldscore, false, 4, 0);
+      P2Display.showNumberDec(oldscore, false, 4, 0);  
     }
-    oldscore--;
   }
 }
 
