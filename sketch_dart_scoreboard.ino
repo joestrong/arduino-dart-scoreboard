@@ -70,7 +70,7 @@ TM1637Display P2Display(P2CLK, P2DIO); // Library init of Player 2 display
 #define Player2Led 5 // 3mm red LED connected to NANO pin 5
 
 // Define needed Variables
-volatile int GAMESTART = 1; // 1=Display start menu : 0=game started
+volatile int GAMESTART = 0; // 0=Display start menu : 1=game started
 volatile int GAMESTARTVALUE = 501; // Score start value
 volatile int PLAYER1Score = 0; // Stores Player 1 current score
 volatile int PLAYER2Score = 0; // Stores Player 2 current score
@@ -83,7 +83,7 @@ volatile int QUITNO = 2; // Don't reset game
 void rotarydetect ()  {
   delay(1); // delay for Debouncing Rotary Encoder
 
-  if (GAMERESET == 1) { // If in Reset game menu, rotary encoder controls the Yes/No dialog
+  if (GAMERESET == 1) { // Game Reset Screen - Rotary Controls for yes/no
     if (digitalRead(RotaryCLK)) {
       if (digitalRead(RotaryDT)) {
         QUITNO = 1;
@@ -94,23 +94,17 @@ void rotarydetect ()  {
         QUITNO = 0;
       }
     }
-  }
-
-  if (GAMERESET == 0) { // Not in Game reset menu
+  } else if (GAMESTART == 0) { // Game Menu Screen - Rotary Controls for starting score
     if (digitalRead(RotaryCLK)) {
       if (digitalRead(RotaryDT)) {
-        if (GAMESTART == 1) { // Starting new game then rotary encoder
           if (GAMESTARTVALUE > 101) {
             GAMESTARTVALUE = GAMESTARTVALUE - 100;
           }
-        }
       }
       if (!digitalRead(RotaryDT)) {
-        if (GAMESTART == 1) {
           if (GAMESTARTVALUE < 9901) {
             GAMESTARTVALUE = GAMESTARTVALUE + 100;
           }
-        }
       }
     }
   }
@@ -208,7 +202,7 @@ void loop()
 
   if (!(digitalRead(RotarySwitch))) { // Do if Rotary Encoder switch is pressed
     delay(250); // debounce switch
-    if (GAMESTART == 0) { // Game has started
+    if (GAMESTART == 1) { // Game has started
       if (GAMERESET == 0) { // Reset screen not active
         GAMERESET = 1; // Display reset screen
       }
@@ -223,14 +217,14 @@ void loop()
         softReset(); // Reset Game
       }
     }
-    if (GAMESTART == 1) { // Game is at select score screen
+    if (GAMESTART == 0) { // Game is at select score screen
       // Start Game
-      GAMESTART = 0; 
+      GAMESTART = 1; 
       drawEnteredNumber();
     }
   }
 
-  if (GAMESTART == 1) { // Set various stuff at startup
+  if (GAMESTART == 0) { // Set various stuff at startup
     digitalWrite(Player1Led, LOW); // Set Player 1 LED to OFF
     digitalWrite(Player2Led, LOW); // Set Player 2 LED to OFF
   
@@ -249,25 +243,23 @@ void loop()
 
   }
 
-  if (GAMESTART == 0) { // Stuff displayed while in Game
-    if (GAMERESET == 0) { // Not in reset game mode
-      if (PLAYERTurn == 1) { // Player 1 is up
-        digitalWrite(Player1Led, HIGH);
-        digitalWrite(Player2Led, LOW);
-        lcd.home();
-        lcd.print("Player 1:       ");
-        lcd.setCursor (0, 1);
-        lcd.print(PLAYER1Score);
-        lcd.print("  MINUS ");
-      } else { // Player 2 is up
-        digitalWrite(Player1Led, LOW);
-        digitalWrite(Player2Led, HIGH);
-        lcd.home();
-        lcd.print("Player 2:       ");
-        lcd.setCursor (0, 1);
-        lcd.print(PLAYER2Score);
-        lcd.print("  MINUS ");
-      }
+  if (GAMESTART == 1 && GAMERESET == 0) { // Stuff displayed while in Game
+    if (PLAYERTurn == 1) { // Player 1 is up
+      digitalWrite(Player1Led, HIGH);
+      digitalWrite(Player2Led, LOW);
+      lcd.home();
+      lcd.print("Player 1:       ");
+      lcd.setCursor (0, 1);
+      lcd.print(PLAYER1Score);
+      lcd.print("  MINUS ");
+    } else { // Player 2 is up
+      digitalWrite(Player1Led, LOW);
+      digitalWrite(Player2Led, HIGH);
+      lcd.home();
+      lcd.print("Player 2:       ");
+      lcd.setCursor (0, 1);
+      lcd.print(PLAYER2Score);
+      lcd.print("  MINUS ");
     }
   }
 
