@@ -137,15 +137,12 @@ void setup()
   P2Display.setBrightness(0x08);
 
   // Flash the Intro text on LCD at power up
-  for (int x = 0; x < 5; x++) {
-    lcd.home (); // go home on LCD
-    lcd.print("DART SCOREBOARD!");
-    lcd.setCursor (0, 1);
-    lcd.print("  Version  1.0  ");
-    delay(1000);
-    lcd.clear();
-    delay(500);
-  }
+  lcd.home (); // go home on LCD
+  lcd.print("DART SCOREBOARD!");
+  lcd.setCursor (0, 1);
+  lcd.print("  Version  1.0  ");
+  delay(1000);
+  lcd.clear();
 
   // Attach interrupt to rotary encoder
   attachInterrupt (0, rotarydetect, CHANGE); // interupt 0 always connected to pin 2 on Arduino UNO
