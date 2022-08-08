@@ -14,7 +14,6 @@
 #include "Keypad.h" // For 12 buttons keypad
 
 //Define the keypad
-int enteredNumber = 0;
 const byte ROWS = 4; // Keypad has four rows
 const byte COLS = 3; // Keypad has three columns
 
@@ -78,10 +77,17 @@ volatile int PLAYERTurn = 1; // Player 1 is first to start
 volatile int GAMERESET = 0; // 0=no : 1=display reset menu
 volatile int QUITYES = 2; // Reset Game
 volatile int QUITNO = 2; // Don't reset game
+int enteredNumber = 0;
+volatile int rotaryChanged = 0;
 
 // Interrupt routine on Pin 2 (interrupt zero) runs if Rotary Encoder CLK pin changes state
 void rotarydetect ()  {
   delay(1); // delay for Debouncing Rotary Encoder
+
+  if (!digitalRead(RotaryCLK)) {
+    return;
+  }
+  rotaryChanged = 1;
 
   if (GAMERESET == 1) { // Game Reset Screen - Rotary Controls for yes/no
     if (digitalRead(RotaryCLK)) {
@@ -140,150 +146,155 @@ void setup()
   delay(1000);
   lcd.clear();
 
+  drawMenuScreen();
+
   // Attach interrupt to rotary encoder
   attachInterrupt (0, rotarydetect, CHANGE); // interupt 0 always connected to pin 2 on Arduino UNO
 }
 
 void loop()
 {
-  char keypressed = keypad.getKey(); // Put value of keypad button if pressed
-  if (keypressed != NO_KEY) { // If keypad button pressed check which key it was
-    switch (keypressed) {
+  if (GAMESTART == 1 && GAMERESET == 0) {
+    checkForKeypadPress();
+  }
 
-      case '1':
-        checknumber(1);
-        break;
-
-      case '2':
-        checknumber(2);
-        break;
-
-      case '3':
-        checknumber(3);
-        break;
-
-      case '4':
-        checknumber(4);
-        break;
-
-      case '5':
-        checknumber(5);
-        break;
-
-      case '6':
-        checknumber(6);
-        break;
-
-      case '7':
-        checknumber(7);
-        break;
-
-      case '8':
-        checknumber(8);
-        break;
-
-      case '9':
-        checknumber(9);
-        break;
-
-      case '0':
-        checknumber(0);
-        break;
-
-      case '*':
-        deletenumber();
-        break;
-
-      case '#':
-        subtractnumber();
-        break;
+  if (rotaryChanged) {
+    if (GAMERESET == 1) {
+      drawResetScreen();
+    } else if (GAMESTART == 1) {
+      drawGameScreen();
+    } else {
+      drawMenuScreen();
     }
+    rotaryChanged = 0;
   }
 
   if (!(digitalRead(RotarySwitch))) { // Do if Rotary Encoder switch is pressed
     delay(250); // debounce switch
-    if (GAMESTART == 1) { // Game has started
+    if (GAMESTART == 0) {
+      GAMESTART = 1; 
+      drawGameScreen();
+    } else {
       if (GAMERESET == 0) { // Reset screen not active
         GAMERESET = 1; // Display reset screen
+        drawResetScreen();
       }
       if (GAMERESET == 1 && QUITNO == 1) { // Game is in reset screen and NO is selected
         GAMERESET = 0; // Reset GameReset to 0
         QUITNO = 2; // Reset NO
         QUITYES = 2; // Reset YES
-        // Draw game screen
-        drawEnteredNumber();
+        drawGameScreen();
       }
       if (GAMERESET == 1 && QUITYES == 1) { // Game is in reset screen and YES is selected
         softReset(); // Reset Game
       }
     }
-    if (GAMESTART == 0) { // Game is at select score screen
-      // Start Game
-      GAMESTART = 1; 
-      drawEnteredNumber();
-    }
   }
+}
 
-  if (GAMESTART == 0) { // Set various stuff at startup
-    digitalWrite(Player1Led, LOW); // Set Player 1 LED to OFF
-    digitalWrite(Player2Led, LOW); // Set Player 2 LED to OFF
+void checkForKeypadPress() {
+  char keypressed = keypad.getKey();
+  if (keypressed == NO_KEY) {
+    return;
+  }
   
-    // Display on LCD starting text
+  switch (keypressed) {
+    case '1':
+      checknumber(1);
+      break;
+    case '2':
+      checknumber(2);
+      break;
+    case '3':
+      checknumber(3);
+      break;
+    case '4':
+      checknumber(4);
+      break;
+    case '5':
+      checknumber(5);
+      break;
+    case '6':
+      checknumber(6);
+      break;
+    case '7':
+      checknumber(7);
+      break;
+    case '8':
+      checknumber(8);
+      break;
+    case '9':
+      checknumber(9);
+      break;
+    case '0':
+      checknumber(0);
+      break;
+    case '*':
+      deletenumber();
+      break;
+    case '#':
+      subtractnumber();
+      break;
+  }
+}
+
+void drawMenuScreen() {
+  digitalWrite(Player1Led, LOW); // Set Player 1 LED to OFF
+  digitalWrite(Player2Led, LOW); // Set Player 2 LED to OFF
+
+  // Display on LCD starting text
+  lcd.home();
+  lcd.print("Starting Score >");
+  lcd.setCursor (0, 1); // go to start of 2nd line
+  lcd.print(GAMESTARTVALUE);
+  lcd.print(" ");
+
+  PLAYER1Score = GAMESTARTVALUE;
+  PLAYER2Score = GAMESTARTVALUE;
+
+  // Display Starting score on both P1 and P2 7 segment Displays
+  P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
+  P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
+}
+
+void drawGameScreen() {
+  if (PLAYERTurn == 1) { // Player 1 is up
+    digitalWrite(Player1Led, HIGH);
+    digitalWrite(Player2Led, LOW);
     lcd.home();
-    lcd.print("Starting Score >");
-    lcd.setCursor (0, 1); // go to start of 2nd line
-    lcd.print(GAMESTARTVALUE);
-    lcd.print(" ");
-
-    // Display Starting score on both P1 and P2 7 segment Displays
-    P1Display.showNumberDec(PLAYER1Score, false, 4, 0);
-    P2Display.showNumberDec(PLAYER2Score, false, 4, 0);
-    PLAYER1Score = GAMESTARTVALUE;
-    PLAYER2Score = GAMESTARTVALUE;
-
+    lcd.print("Player 1:       ");
+    lcd.setCursor (0, 1);
+    lcd.print(PLAYER1Score);
+    lcd.print("  MINUS ");
+  } else { // Player 2 is up
+    digitalWrite(Player1Led, LOW);
+    digitalWrite(Player2Led, HIGH);
+    lcd.home();
+    lcd.print("Player 2:       ");
+    lcd.setCursor (0, 1);
+    lcd.print(PLAYER2Score);
+    lcd.print("  MINUS ");
   }
+  
+  // Draw entered number
+  lcd.setCursor(13, 1);
+  lcd.print(enteredNumber);
+  lcd.print("  ");
 
-  if (GAMESTART == 1 && GAMERESET == 0) { // Stuff displayed while in Game
-    if (PLAYERTurn == 1) { // Player 1 is up
-      digitalWrite(Player1Led, HIGH);
-      digitalWrite(Player2Led, LOW);
-      lcd.home();
-      lcd.print("Player 1:       ");
-      lcd.setCursor (0, 1);
-      lcd.print(PLAYER1Score);
-      lcd.print("  MINUS ");
-    } else { // Player 2 is up
-      digitalWrite(Player1Led, LOW);
-      digitalWrite(Player2Led, HIGH);
-      lcd.home();
-      lcd.print("Player 2:       ");
-      lcd.setCursor (0, 1);
-      lcd.print(PLAYER2Score);
-      lcd.print("  MINUS ");
-    }
-  }
+}
 
-  if (GAMERESET == 1) { // Stuff displaed while in Game Reset Mode
-    if (QUITNO == 1)  { // Display NO on LCD
-      lcd.home();
-      lcd.print("   Reset Game?   ");
-      lcd.setCursor(0, 1);
-      lcd.print("NO!              ");
-    } else {
-      if (QUITYES == 1)  { // Display YES on LCD
-        lcd.home();
-        lcd.print("   Reset Game?   ");
-        lcd.setCursor(0, 1);
-        lcd.print("             YES!");
-      } else {
-        if (QUITYES == 2)  { // Display both NO and YES on LCD
-          lcd.home();
-          lcd.print("   Reset Game?   ");
-          lcd.setCursor(0, 1);
-          lcd.print("NO!          YES!");
-        }
-      }
-    }
+void drawResetScreen() {
+  lcd.home();
+  lcd.print("   Reset Game?   ");
+  if (QUITNO == 1)  {
+    lcd.setCursor(0, 1);
+    lcd.print("NO!              ");
+  } else if (QUITYES == 1)  {
+    lcd.setCursor(0, 1);
+    lcd.print("             YES!");
+  } else {
+    lcd.setCursor(0, 1);
+    lcd.print("NO!          YES!");
   }
 }
 
@@ -302,18 +313,12 @@ void checknumber(int x) {
   }
   enteredNumber = (enteredNumber * 10) + x;
 
-  drawEnteredNumber();
+  drawGameScreen();
 }
 
 void deletenumber() {
   enteredNumber = enteredNumber / 10;
-  drawEnteredNumber();
-}
-
-void drawEnteredNumber() {
-  lcd.setCursor(13, 1);
-  lcd.print(enteredNumber);
-  lcd.print("  ");
+  drawGameScreen();
 }
 
 void subtractnumber() {
@@ -333,7 +338,8 @@ void subtractnumber() {
     PLAYERTurn = 1;
   }
   
-  resetnumbers();
+  enteredNumber = 0;
+  drawGameScreen();
 }
 
 void subtractScoreAnimation(int player, int oldscore, int newscore) {
@@ -345,10 +351,4 @@ void subtractScoreAnimation(int player, int oldscore, int newscore) {
       P2Display.showNumberDec(oldscore, false, 4, 0);  
     }
   }
-}
-
-void resetnumbers() {
-  enteredNumber = 0;
-
-  drawEnteredNumber();
 }
