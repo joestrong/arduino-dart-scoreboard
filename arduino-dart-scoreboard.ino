@@ -80,6 +80,12 @@ int enteredNumber = 0;
 volatile int rotaryChanged = 0;
 volatile int rotaryValue = -1;
 
+uint8_t dart1[8]  = {0x0, 0x0, 0x7};
+uint8_t dart2[8]  = {0x0, 0x0, 0x1F, 0x7};
+uint8_t dart3[8]  = {0x0, 0x0, 0x1F, 0x1F};
+uint8_t dart4[8]  = {0x1, 0x3, 0x7, 0x1D, 0x1F, 0x7, 0x3, 0x1};
+uint8_t dart5[8]  = {0x18, 0x1C, 0x1E, 0x11, 0x1E, 0x1C, 0x1C, 0x18};
+
 // Interrupt routine on Pin 2 (interrupt zero) runs if Rotary Encoder CLK pin changes state
 void rotarydetect ()  {
   delay(1); // delay for Debouncing Rotary Encoder
@@ -122,6 +128,11 @@ void setup()
   pinMode(RotarySwitch, INPUT);
   digitalWrite(RotarySwitch, INPUT_PULLUP); // Rotary Switch uses internal pullup resistor
   //  lcd.begin (16, 2); // <<-- our LCD is a 16x2, change for your LCD if needed
+  lcd.createChar(0, dart1);
+  lcd.createChar(1, dart2);
+  lcd.createChar(2, dart3);
+  lcd.createChar(3, dart4);
+  lcd.createChar(4, dart5);
   lcd.begin ();
 
   // LCD Backlight ON
@@ -141,7 +152,8 @@ void setup()
   lcd.home (); // go home on LCD
   lcd.print("DART SCOREBOARD!");
   lcd.setCursor (0, 1);
-  lcd.print("  Version  1.0  ");
+  lcd.print("Version 1 ");
+  drawDartImage();
   delay(1000);
   lcd.clear();
 
@@ -242,11 +254,13 @@ void drawMenuScreen() {
   digitalWrite(Player2Led, LOW); // Set Player 2 LED to OFF
 
   // Display on LCD starting text
+  lcd.clear();
   lcd.home();
   lcd.print("Starting Score >");
   lcd.setCursor (0, 1); // go to start of 2nd line
   lcd.print(GAMESTARTVALUE);
-  lcd.print(" ");
+  lcd.setCursor(10, 1);
+  drawDartImage();
 
   PLAYER1Score = GAMESTARTVALUE;
   PLAYER2Score = GAMESTARTVALUE;
@@ -257,6 +271,7 @@ void drawMenuScreen() {
 }
 
 void drawGameScreen() {
+  lcd.clear();
   if (PLAYERTurn == 1) { // Player 1 is up
     digitalWrite(Player1Led, HIGH);
     digitalWrite(Player2Led, LOW);
@@ -283,6 +298,7 @@ void drawGameScreen() {
 }
 
 void drawResetScreen() {
+  lcd.clear();
   lcd.home();
   lcd.print("   Reset Game?   ");
   if (QUITNO == 1)  {
@@ -350,4 +366,13 @@ void subtractScoreAnimation(int player, int oldscore, int newscore) {
       P2Display.showNumberDec(oldscore, false, 4, 0);  
     }
   }
+}
+
+void drawDartImage() {
+  lcd.write(0);
+  lcd.write(1);
+  lcd.write(2);
+  lcd.write(2);
+  lcd.write(3);
+  lcd.write(4);
 }
