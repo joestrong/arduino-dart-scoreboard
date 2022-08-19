@@ -1,10 +1,9 @@
 /* Arduino Dart ScoreBoard
 
-  Created by Yvan / https://Brainy-Bits.com
-  This code is in the public domain...
-  You can: copy it, use it, modify it, share it or just plain ignore it!
-  Thx!
-
+  Created by:
+   - Joe Strong
+   - Stuart Crompton
+   - Code based on example code from Yvan @ https://Brainy-Bits.com
 */
 
 // Include needed Libraries
