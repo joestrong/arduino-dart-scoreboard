@@ -78,39 +78,39 @@ volatile int QUITYES = 2; // Reset Game
 volatile int QUITNO = 2; // Don't reset game
 int enteredNumber = 0;
 volatile int rotaryChanged = 0;
+volatile int rotaryValue = -1;
 
 // Interrupt routine on Pin 2 (interrupt zero) runs if Rotary Encoder CLK pin changes state
 void rotarydetect ()  {
   delay(1); // delay for Debouncing Rotary Encoder
+  int rotaryRight = 0;
+  int rotaryLeft = 0;
 
-  if (!digitalRead(RotaryCLK)) {
-    return;
+  if (digitalRead(RotaryCLK) != rotaryValue) {
+    rotaryChanged = 1;
+    rotaryValue = digitalRead(RotaryCLK);
+    if (digitalRead(RotaryCLK) == digitalRead(RotaryDT)) {
+      rotaryLeft = 1;
+    } else {
+      rotaryRight = 1;
+    }
   }
-  rotaryChanged = 1;
 
   if (GAMERESET == 1) { // Game Reset Screen - Rotary Controls for yes/no
-    if (digitalRead(RotaryCLK)) {
-      if (digitalRead(RotaryDT)) {
-        QUITNO = 1;
-        QUITYES = 0;
-      }
-      if (!digitalRead(RotaryDT)) {
-        QUITYES = 1;
-        QUITNO = 0;
-      }
+    if (rotaryLeft) {
+      QUITNO = 1;
+      QUITYES = 0;
+    }
+    if (rotaryRight) {
+      QUITYES = 1;
+      QUITNO = 0;
     }
   } else if (GAMESTART == 0) { // Game Menu Screen - Rotary Controls for starting score
-    if (digitalRead(RotaryCLK)) {
-      if (digitalRead(RotaryDT)) {
-          if (GAMESTARTVALUE > 101) {
-            GAMESTARTVALUE = GAMESTARTVALUE - 100;
-          }
-      }
-      if (!digitalRead(RotaryDT)) {
-          if (GAMESTARTVALUE < 9901) {
-            GAMESTARTVALUE = GAMESTARTVALUE + 100;
-          }
-      }
+    if (rotaryLeft & GAMESTARTVALUE > 101) {
+      GAMESTARTVALUE = GAMESTARTVALUE - 100;
+    }
+    if (rotaryRight && GAMESTARTVALUE < 9901) {
+      GAMESTARTVALUE = GAMESTARTVALUE + 100;
     }
   }
 }
