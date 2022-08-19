@@ -4,7 +4,7 @@
 
 Install from the Arduino Library Manager:
 
-- LiquidCrystal (by Arduino)
+- LiquidCrystal I2C (by Marco Schwartz https://www.arduino.cc/reference/en/libraries/liquidcrystal-i2c/)
 - Keypad (by Chris--A https://github.com/Chris--A/Keypad)
 - TM1637 (by Avishay Orpaz https://github.com/avishorp/TM1637)
 
