@@ -279,7 +279,7 @@ void drawGameScreen() {
     lcd.print("Player 1:");
     lcd.setCursor (0, 1);
     lcd.print(PLAYER1Score);
-    lcd.print("  MINUS");
+    lcd.print("   MINUS");
   } else { // Player 2 is up
     digitalWrite(Player1Led, LOW);
     digitalWrite(Player2Led, HIGH);
@@ -287,11 +287,17 @@ void drawGameScreen() {
     lcd.print("Player 2:");
     lcd.setCursor (0, 1);
     lcd.print(PLAYER2Score);
-    lcd.print("  MINUS");
+    lcd.print("   MINUS");
   }
   
   // Draw entered number
-  lcd.setCursor(13, 1);
+  if (enteredNumber >= 100) {
+    lcd.setCursor(13, 1);
+  } else if (enteredNumber >= 10) {
+    lcd.setCursor(14, 1);
+  } else {
+    lcd.setCursor(15, 1);
+  }
   lcd.print(enteredNumber);
 }
 
