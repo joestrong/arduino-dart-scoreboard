@@ -276,40 +276,40 @@ void drawGameScreen() {
     digitalWrite(Player1Led, HIGH);
     digitalWrite(Player2Led, LOW);
     lcd.home();
-    lcd.print("Player 1:       ");
+    lcd.print("Player 1:");
     lcd.setCursor (0, 1);
     lcd.print(PLAYER1Score);
-    lcd.print("  MINUS ");
+    lcd.print("  MINUS");
   } else { // Player 2 is up
     digitalWrite(Player1Led, LOW);
     digitalWrite(Player2Led, HIGH);
     lcd.home();
-    lcd.print("Player 2:       ");
+    lcd.print("Player 2:");
     lcd.setCursor (0, 1);
     lcd.print(PLAYER2Score);
-    lcd.print("  MINUS ");
+    lcd.print("  MINUS");
   }
   
   // Draw entered number
   lcd.setCursor(13, 1);
   lcd.print(enteredNumber);
-  lcd.print("  ");
-
 }
 
 void drawResetScreen() {
   lcd.clear();
-  lcd.home();
-  lcd.print("   Reset Game?   ");
+  lcd.setCursor(2, 0);
+  lcd.print("Reset Game?");
   if (QUITNO == 1)  {
     lcd.setCursor(0, 1);
-    lcd.print("NO!              ");
+    lcd.print("NO!");
   } else if (QUITYES == 1)  {
-    lcd.setCursor(0, 1);
-    lcd.print("             YES!");
+    lcd.setCursor(13, 1);
+    lcd.print("YES!");
   } else {
     lcd.setCursor(0, 1);
-    lcd.print("NO!          YES!");
+    lcd.print("NO!");
+    lcd.setCursor(13, 1);
+    lcd.print("YES!");
   }
 }
 
