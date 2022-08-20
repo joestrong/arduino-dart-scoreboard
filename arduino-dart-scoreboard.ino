@@ -68,7 +68,7 @@ TM1637Display P2Display(P2CLK, P2DIO); // Library init of Player 2 display
 #define Player2Led 5 // 3mm red LED connected to NANO pin 5
 
 // Define needed Variables
-volatile int GAMESTART = 0; // 0=Display start menu : 1=game started
+volatile int GAMESTART = 0; // 0=Display start menu : 1=game started : 2=game finished
 volatile int GAMESTARTVALUE = 501; // Score start value
 volatile int PLAYER1Score = 0; // Stores Player 1 current score
 volatile int PLAYER2Score = 0; // Stores Player 2 current score
@@ -174,8 +174,10 @@ void loop()
       drawResetScreen();
     } else if (GAMESTART == 1) {
       drawGameScreen();
-    } else {
+    } else if (GAMESTART == 0) {
       drawMenuScreen();
+    } else if (GAMESTART == 2) {
+      drawWinScreen();
     }
     rotaryChanged = 0;
   }
@@ -185,7 +187,7 @@ void loop()
     if (GAMESTART == 0) {
       GAMESTART = 1; 
       drawGameScreen();
-    } else {
+    } else if (GAMESTART == 1 || GAMESTART == 2) {
       if (GAMERESET == 0) { // Reset screen not active
         GAMERESET = 1; // Display reset screen
         drawResetScreen();
@@ -194,7 +196,11 @@ void loop()
         GAMERESET = 0; // Reset GameReset to 0
         QUITNO = 2; // Reset NO
         QUITYES = 2; // Reset YES
-        drawGameScreen();
+        if (GAMESTART == 1) {
+          drawGameScreen();
+        } else if (GAMESTART == 2) {
+          drawWinScreen();
+        }
       }
       if (GAMERESET == 1 && QUITYES == 1) { // Game is in reset screen and YES is selected
         softReset(); // Reset Game
@@ -319,9 +325,16 @@ void drawResetScreen() {
   }
 }
 
-//
-// Various created functions in Main Loop
-//
+void drawWinScreen() {
+  int player = PLAYER1Score == 0 ? 1 : 2;
+  lcd.clear();
+  lcd.setCursor(1, 0);
+  lcd.print("Player ");
+  lcd.print(player);
+  lcd.print(" Wins!");
+  lcd.setCursor(5, 1);
+  drawDartImage();
+}
 
 // Reset Arduino to Restart Game
 void softReset() {
@@ -360,7 +373,13 @@ void subtractnumber() {
   }
   
   enteredNumber = 0;
-  drawGameScreen();
+
+  if (PLAYER1Score == 0 || PLAYER2Score == 0) {
+    GAMESTART = 2;
+    drawWinScreen();
+  } else {
+    drawGameScreen();
+  }
 }
 
 void subtractScoreAnimation(int player, int oldscore, int newscore) {
